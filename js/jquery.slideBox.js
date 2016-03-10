@@ -49,8 +49,8 @@
 	 * 
 	 * @param {Object} source   目标节点dom对象
 	 * @param {Object} options  配置项
-	 * @author zhengchj
-	 * @mail zhengchj@neusoft.com
+	 * @author AfterWin
+	 * @mail CJ_Zheng1023@hotmail.com
 	 */
     var SlideBox=function(source,options){
         this.source=source;
@@ -68,8 +68,8 @@
     	 * 
     	 * 初始化传送带控件
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _init:function(){
             var options=this.options;
@@ -92,8 +92,8 @@
     	 * 
     	 * 设置每页长度
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _setLimit:function(){
             if(this.options.ajax.data[this.options.ajax.limitPageKey]){
@@ -104,8 +104,8 @@
     	 * 
     	 * 设置每页起始索引
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _setStart:function(page){
             this.options.ajax.data[this.options.ajax.startPageKey]=page*this.options.limit;
@@ -116,8 +116,8 @@
     	 * 
     	 * @param {Object} options   页码
     	 * @param {Object} ifReload  是否重新加载
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _load:function(page,ifReload){
             var me=this;
@@ -160,8 +160,8 @@
     	 * 
     	 * 绑定事件（左右箭头）
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _bindEvent:function(){
             var me=this;
@@ -200,8 +200,8 @@
     	 * 
     	 * 滑动效果
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _slide:function(){
             var me=this;
@@ -213,8 +213,8 @@
     	 * 
     	 * 删除传送带内部
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _remove:function(){
         	this.list.empty();
@@ -229,8 +229,8 @@
     	 * 对外暴露接口，获取所有传送带子元素jquery对象
     	 * 
     	 * @method public
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         getAllItem:function(){
         	return this.list.find("li").children();
@@ -240,8 +240,8 @@
     	 * 对外暴露接口，重新加载数据
     	 * 
     	 * @method public
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         reload:function(){
         	this._load(0,true);
@@ -253,8 +253,8 @@
      * 
      * @param {Object} itemData    子元素数据
      * @param {Object} options     配置项
-     * @author zhengchj
-     * @mail zhengchj@neusoft.com
+     * @author AfterWin
+     * @mail CJ_Zheng1023@hotmail.com
      */
     var Item=function(itemData,options){
         this.itemData=itemData;
@@ -272,8 +272,8 @@
     	 * 
     	 * 构建子元素dom结构
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _build:function(){
             var options=this.options,itemData=this.itemData;
@@ -290,8 +290,8 @@
     	 * 
     	 * 绑定子元素事件
     	 * 
-    	 * @author zhengchj
-    	 * @mail zhengchj@neusoft.com
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
     	 */
         _bindEvent:function(){
             this.itemObj.children().bind({
@@ -315,8 +315,8 @@
 	 * 
 	 * @param {Object} options   配置项
 	 * @return {TypeName}        传送带对象
-	 * @author zhengchj
-	 * @mail zhengchj@neusoft.com
+     * @author AfterWin
+     * @mail CJ_Zheng1023@hotmail.com
 	 */
     $.fn.slideBox=function(options){
         var me=this;
