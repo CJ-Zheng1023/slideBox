@@ -1,0 +1,54 @@
+.clear-slide-box:after {
+    content:"\200B";
+    display:block;
+    height:0;
+    clear:both;
+}
+.container-slide-box{
+    position: relative;
+    padding: 0 20px;
+}
+.container-slide-box .arrow{
+    top: 50%;
+    margin-top: -14px;
+    position: absolute;
+    cursor: text;
+}
+.container-slide-box .arrow-left{
+    left: 0;
+    width: 18px;
+    height: 28px;
+    background-image: url("images/arrow-left.png");
+}
+.container-slide-box .arrow-right{
+    right: 0;
+    width: 18px;
+    height: 28px;
+    background-image: url("images/arrow-right.png");
+}
+.container-slide-box .arrow-left.active{
+    background-image: url("images/arrow-left-active.png");
+    cursor: pointer;
+}
+.container-slide-box .arrow-right.active{
+    background-image: url("images/arrow-right-active.png");
+    cursor: pointer;
+}
+.container-slide-box .list-slide-box{
+    position: relative;
+    overflow: hidden;
+}
+.container-slide-box .list-slide-box ul{
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.container-slide-box .list-slide-box ul li{
+    float: left;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
