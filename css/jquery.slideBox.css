@@ -10,20 +10,20 @@
 }
 .container-slide-box .arrow{
     top: 50%;
-    margin-top: -14px;
+    margin-top: -8.5px;
     position: absolute;
     cursor: text;
 }
 .container-slide-box .arrow-left{
-    left: 0;
-    width: 18px;
-    height: 28px;
+    left: 7px;
+    width: 9px;
+    height: 17px;
     background-image: url("images/arrow-left.png");
 }
 .container-slide-box .arrow-right{
-    right: 0;
-    width: 18px;
-    height: 28px;
+    right: 7px;
+    width: 9px;
+    height: 17px;
     background-image: url("images/arrow-right.png");
 }
 .container-slide-box .arrow-left.active{

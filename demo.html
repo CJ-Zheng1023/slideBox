@@ -23,6 +23,9 @@
                 url:"data/data.json",
                 totalCountKey:"pagination.totalCount",
                 render:function(item){
+                    if(item=="default"){
+                        return"<h4>default</h4>";
+                    }
                     return "<h4>"+item.name+"</h4><h4>"+item.age+"</h4>"
                 }
             }

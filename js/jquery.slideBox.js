@@ -9,7 +9,9 @@
  * 
  *      v1.3.0     2016.3.10       1.修改调用reload方法时加载数据不正确的问题
  *
- *      v1.3.1     20163.10        1.修改_setLimit方法逻辑
+ *      v1.3.1     2016.3.10        1.修改_setLimit方法逻辑
+ *
+ *      v1.4.0     2016.4.8        1.新增当记录数为空时的逻辑
  *      
  */
 
@@ -41,7 +43,7 @@
             click:function(){},       //click回调函数
             mouseover:function(){}    //mouseover回调函数            
         },
-        version:"v1.2.0"
+        version:"v1.4.0"
     }
 
 	/*
@@ -136,6 +138,16 @@
                     me.totalCount=eval("data."+options.ajax.totalCountKey);
                     me.totalPage=Math.floor((me.totalCount+options.limit-1)/options.limit);//计算总页数
                     var itemList=data[options.ajax.dataKey];
+                    if(!itemList||!itemList.length||itemList.length==0){//当没有记录时
+                        me.arrowLeft.removeClass("active");
+                        if(me.options.ifWantDefaultItem){
+                            for(var j=0,len=me.options.limit;j<len;j++){
+                                var item=new Item("default",options);
+                                me.list.append(item._build());
+                            }
+                        }
+                        return;
+                    }
                     for(var i= 0,len=itemList.length;i<len;i++){
                         var item=new Item(itemList[i],options);
                         me.list.append(item._build());
