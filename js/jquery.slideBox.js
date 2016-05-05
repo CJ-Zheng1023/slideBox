@@ -8,10 +8,12 @@
  * 	                               2.BUG修改
  * 
  *      v1.3.0     2016.3.10       1.修改调用reload方法时加载数据不正确的问题
- *
+ * 
  *      v1.3.1     2016.3.10        1.修改_setLimit方法逻辑
  *
  *      v1.4.0     2016.4.8        1.新增当记录数为空时的逻辑
+ * 
+ * 		v1.4.1     2016.4.28       1.设置标识位canSlide，解决点击箭头过快时报脚本错误的问题
  *      
  */
 
@@ -19,13 +21,13 @@
 
 
 (function($){
-	
-	/*
-	 * 
-	 * 默认配置项
-	 */
-	var DEFAULT_SETTING={
-    	itemWidth:null,               //元素宽度
+
+    /*
+     *
+     * 默认配置项
+     */
+    var DEFAULT_SETTING={
+        itemWidth:null,               //元素宽度
         itemHeight:null,              //元素高度
         ifWantDefaultItem:true,       //是否需要缺省元素
         limit:4,                      //每页显示数据个数
@@ -43,36 +45,37 @@
             click:function(){},       //click回调函数
             mouseover:function(){}    //mouseover回调函数            
         },
-        version:"v1.4.0"
+        version:"v1.4.1"
     }
 
-	/*
-	 * 传送带对象
-	 * 
-	 * @param {Object} source   目标节点dom对象
-	 * @param {Object} options  配置项
-	 * @author AfterWin
-	 * @mail CJ_Zheng1023@hotmail.com
-	 */
+    /*
+     * 传送带对象
+     *
+     * @param {Object} source   目标节点dom对象
+     * @param {Object} options  配置项
+     * @author AfterWin
+     * @mail CJ_Zheng1023@hotmail.com
+     */
     var SlideBox=function(source,options){
         this.source=source;
         this.options=options;
         this.currentPage=0;
         this._setLimit();
         this._init();
+        this.canSlide=true;    //是否可点击滑动标识位
     }
-	/*
-	 * 
-	 * 扩展传送带对象原型
-	 */
+    /*
+     *
+     * 扩展传送带对象原型
+     */
     $.extend(SlideBox.prototype,{
-    	/*
-    	 * 
-    	 * 初始化传送带控件
-    	 * 
+        /*
+         *
+         * 初始化传送带控件
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _init:function(){
             var options=this.options;
             var container=$("<div></div>").addClass("container-slide-box");
@@ -91,36 +94,36 @@
             this._bindEvent();
         },
         /*
-    	 * 
-    	 * 设置每页长度
-    	 * 
+         *
+         * 设置每页长度
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _setLimit:function(){
             if(this.options.ajax.data[this.options.ajax.limitPageKey]){
                 this.options.limit=this.options.ajax.data[this.options.ajax.limitPageKey];
             }
         },
         /*
-    	 * 
-    	 * 设置每页起始索引
-    	 * 
+         *
+         * 设置每页起始索引
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _setStart:function(page){
             this.options.ajax.data[this.options.ajax.startPageKey]=page*this.options.limit;
         },
         /*
-    	 * 
-    	 * 通过ajax请求加载数据
-    	 * 
-    	 * @param {Object} options   页码
-    	 * @param {Object} ifReload  是否重新加载
+         *
+         * 通过ajax请求加载数据
+         *
+         * @param {Object} options   页码
+         * @param {Object} ifReload  是否重新加载
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _load:function(page,ifReload){
             var me=this;
             var options=me.options;
@@ -131,13 +134,14 @@
                 data:options.ajax.data,
                 dataType:"json",
                 success:function(data){
-                	if(ifReload){
-                		me._remove();
-                	}
-            		me.currentPage=page;
+                    if(ifReload){
+                        me._remove();
+                    }
+                    me.currentPage=page;
                     me.totalCount=eval("data."+options.ajax.totalCountKey);
                     me.totalPage=Math.floor((me.totalCount+options.limit-1)/options.limit);//计算总页数
                     var itemList=data[options.ajax.dataKey];
+
                     if(!itemList||!itemList.length||itemList.length==0){//当没有记录时
                         me.arrowLeft.removeClass("active");
                         if(me.options.ifWantDefaultItem){
@@ -153,10 +157,10 @@
                         me.list.append(item._build());
                     }
                     if(me.options.ifWantDefaultItem){
-                    	for(var j=0,len=me.options.limit-itemList.length;j<len;j++){
-                    		var item=new Item("default",options);
-                        	me.list.append(item._build());
-                    	}
+                        for(var j=0,len=me.options.limit-itemList.length;j<len;j++){
+                            var item=new Item("default",options);
+                            me.list.append(item._build());
+                        }
                     }
                     me.list.width(options.itemWidth*me.list.find("li").length);
                     if(me.totalPage==1){
@@ -169,12 +173,12 @@
             })
         },
         /*
-    	 * 
-    	 * 绑定事件（左右箭头）
-    	 * 
+         *
+         * 绑定事件（左右箭头）
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _bindEvent:function(){
             var me=this;
             me.arrowLeft.click(function(){
@@ -209,54 +213,59 @@
             })
         },
         /*
-    	 * 
-    	 * 滑动效果
-    	 * 
+         *
+         * 滑动效果
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _slide:function(){
             var me=this;
+            if(!me.canSlide)
+                return;
+            me.canSlide=false;
             me.list.animate({
                 left:-me.list.find("li").eq(me.currentPage*me.options.limit).position().left
-            })
+            },function(){
+                me.canSlide=true;
+            });
         },
         /*
-    	 * 
-    	 * 删除传送带内部
-    	 * 
+         *
+         * 删除传送带内部
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _remove:function(){
-        	this.list.empty();
-        	this.list.css({
-        		left:0
-        	})
-        	this.arrowLeft.addClass("active");
-        	this.arrowRight.removeClass("active");
+            this.list.empty();
+            this.list.css({
+                left:0
+            })
+            this.arrowLeft.addClass("active");
+            this.arrowRight.removeClass("active");
         },
         /*
-    	 * 
-    	 * 对外暴露接口，获取所有传送带子元素jquery对象
-    	 * 
-    	 * @method public
+         *
+         * 对外暴露接口，获取所有传送带子元素jquery对象
+         *
+         * @method public
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         getAllItem:function(){
-        	return this.list.find("li").children();
+            return this.list.find("li").children();
         },
         /*
-    	 * 
-    	 * 对外暴露接口，重新加载数据
-    	 * 
-    	 * @method public
+         *
+         * 对外暴露接口，重新加载数据
+         *
+         * @method public
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         reload:function(){
-        	this._load(0,true);
+            this._load(0,true);
         }
     })
 
@@ -273,20 +282,20 @@
         this.options=options;
     }
 
-    
+
     /*
      * 
      * 扩展传送带子元素对象原型
      * 
      */
     $.extend(Item.prototype,{
-    	/*
-    	 * 
-    	 * 构建子元素dom结构
-    	 * 
+        /*
+         *
+         * 构建子元素dom结构
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _build:function(){
             var options=this.options,itemData=this.itemData;
             var li=$("<li></li>").css({
@@ -299,12 +308,12 @@
             return li;
         },
         /*
-    	 * 
-    	 * 绑定子元素事件
-    	 * 
+         *
+         * 绑定子元素事件
+         *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
-    	 */
+         */
         _bindEvent:function(){
             this.itemObj.children().bind({
                 click:this.options.event.click,
@@ -322,14 +331,14 @@
 
 
 
-	/*
-	 * 扩展jquery方法
-	 * 
-	 * @param {Object} options   配置项
-	 * @return {TypeName}        传送带对象
+    /*
+     * 扩展jquery方法
+     *
+     * @param {Object} options   配置项
+     * @return {TypeName}        传送带对象
      * @author AfterWin
      * @mail CJ_Zheng1023@hotmail.com
-	 */
+     */
     $.fn.slideBox=function(options){
         var me=this;
         var op= $.extend(true,DEFAULT_SETTING,options||DEFAULT_SETTING);
