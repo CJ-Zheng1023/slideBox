@@ -6,11 +6,15 @@
 }
 .container-slide-box{
     position: relative;
+
+}
+.container-slide-box.container-slide-box-vertical{
+    padding: 20px 0px;
+}
+.container-slide-box.container-slide-box-horizontal{
     padding: 0 20px;
 }
 .container-slide-box .arrow{
-    top: 50%;
-    margin-top: -8.5px;
     position: absolute;
     cursor: text;
 }
@@ -19,20 +23,47 @@
     width: 9px;
     height: 17px;
     background-image: url("images/arrow-left.png");
+    top: 50%;
+    margin-top: -8.5px;
 }
 .container-slide-box .arrow-right{
     right: 7px;
     width: 9px;
     height: 17px;
     background-image: url("images/arrow-right.png");
+    top: 50%;
+    margin-top: -8.5px;
+}
+.container-slide-box .arrow-up{
+    top: 7px;
+    height: 9px;
+    width: 17px;
+    background-image: url("images/arrow-up.png");
+    left: 50%;
+    margin-left: -8.5px;
+}
+.container-slide-box .arrow-down{
+    bottom: 7px;
+    height: 9px;
+    width: 17px;
+    background-image: url("images/arrow-down.png");
+    left: 50%;
+    margin-left: -8.5px;
+}
+.container-slide-box .arrow.active{
+    cursor: pointer;
 }
 .container-slide-box .arrow-left.active{
     background-image: url("images/arrow-left-active.png");
-    cursor: pointer;
 }
 .container-slide-box .arrow-right.active{
     background-image: url("images/arrow-right-active.png");
-    cursor: pointer;
+}
+.container-slide-box .arrow-up.active{
+    background-image: url("images/arrow-up-active.png");
+}
+.container-slide-box .arrow-down.active{
+    background-image: url("images/arrow-down-active.png");
 }
 .container-slide-box .list-slide-box{
     position: relative;
@@ -47,8 +78,10 @@
     list-style: none;
 }
 .container-slide-box .list-slide-box ul li{
-    float: left;
     margin: 0;
     padding: 0;
     border: none;
+}
+.container-slide-box.container-slide-box-horizontal .list-slide-box ul li{
+    float: left;
 }

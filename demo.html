@@ -3,11 +3,19 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <link href="css/jquery.slideBox.css" rel="stylesheet" typ="text/css" />
+    <link href="css/jquery.slideBox.css" rel="stylesheet" type="text/css" />
+    <style>
+        h4{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
 
     <div id="test" style="margin-top: 200px;margin-left: 100px;width: 500px;"></div>
+    <div id="test1" style="margin-top: 50px;margin-left: 100px;height: 370px;width: 110px"></div>
+
 
 
 <script src="js/jquery-1.8.3.js"></script>
@@ -30,6 +38,24 @@
                 }
             }
         });
+        var slidebox1=$("#test1").slideBox({
+            itemWidth:100,
+            itemHeight:80,
+            limit:4,
+            direction:"vertical",
+            ajax:{
+                dataKey:"list",
+                url:"data/data.json",
+                totalCountKey:"pagination.totalCount",
+                render:function(item){
+                    if(item=="default"){
+                        return"<h4>default</h4>";
+                    }
+                    return "<h4>"+item.name+"</h4><h4>"+item.age+"</h4>"
+                }
+            }
+        });
+        console.log(slidebox1.options)
     })
 </script>
 </body>

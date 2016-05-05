@@ -14,6 +14,8 @@
  *      v1.4.0     2016.4.8        1.新增当记录数为空时的逻辑
  * 
  * 		v1.4.1     2016.4.28       1.设置标识位canSlide，解决点击箭头过快时报脚本错误的问题
+ *
+ *      v1.5.0     2016.5.5       1.增加垂直排列功能，在配置项设置direction为vertical（垂直）,默认值为horizontal（水平方向）
  *      
  */
 
@@ -23,30 +25,49 @@
 (function($){
 
     /*
+     * 扩展jquery方法
      *
-     * 默认配置项
+     * @param {Object} options   配置项
+     * @return {TypeName}        传送带对象
+     * @author AfterWin
+     * @mail CJ_Zheng1023@hotmail.com
      */
-    var DEFAULT_SETTING={
-        itemWidth:null,               //元素宽度
-        itemHeight:null,              //元素高度
-        ifWantDefaultItem:true,       //是否需要缺省元素
-        limit:4,                      //每页显示数据个数
-        ajax:{
-            url:"",                   //ajax请求url
-            type:"POST",              //请求类型
-            data:{},                  //请求参数
-            dataKey:"",               //数据键值
-            totalCountKey:"",          //总数据量键值
-            limitPageKey:"",	      //每页显示数据个数键值
-            startPageKey:"",          //每页起始索引位置键值
-            render:function(item){}   //子元素渲染回调函数  item为子元素数据项（在此方法构建子元素dom结构）
-        },
-        event:{                       //以下事件回调函数都为子元素绑定
-            click:function(){},       //click回调函数
-            mouseover:function(){}    //mouseover回调函数            
-        },
-        version:"v1.4.1"
+    $.fn.slideBox=function(options){
+        /*
+         *
+         * 默认配置项
+         */
+        var DEFAULT_SETTING={
+            itemWidth:null,               //元素宽度
+            itemHeight:null,              //元素高度
+            ifWantDefaultItem:true,       //是否需要缺省元素
+            direction:"horizontal",     //水平(horizontal)，垂直(vertical)排列
+            limit:4,                      //每页显示数据个数
+            ajax:{
+                url:"",                   //ajax请求url
+                type:"POST",              //请求类型
+                data:{},                  //请求参数
+                dataKey:"",               //数据键值
+                totalCountKey:"",          //总数据量键值
+                limitPageKey:"",	      //每页显示数据个数键值
+                startPageKey:"",          //每页起始索引位置键值
+                render:function(item){}   //子元素渲染回调函数  item为子元素数据项（在此方法构建子元素dom结构）
+            },
+            event:{                       //以下事件回调函数都为子元素绑定
+                click:function(){},       //click回调函数
+                mouseover:function(){}    //mouseover回调函数
+            },
+            version:"v1.5.0"
+        }
+        var me=this;
+        var op= $.extend(true,DEFAULT_SETTING,options||DEFAULT_SETTING);
+        return new SlideBox(me,op);
     }
+
+
+
+
+
 
     /*
      * 传送带对象
@@ -78,17 +99,33 @@
          */
         _init:function(){
             var options=this.options;
-            var container=$("<div></div>").addClass("container-slide-box");
-            var arrowLeft=$("<i></i>").addClass("arrow").addClass("arrow-left").addClass("active");
-            var arrowRight=$("<i></i>").addClass("arrow").addClass("arrow-right");
-            var list=$("<ul></ul>").addClass("clear-slide-box");
+            var container=$("<div></div>").addClass("container-slide-box"),
+                arrowLeft=$("<i></i>").addClass("arrow"),
+                arrowRight=$("<i></i>").addClass("arrow"),
+                list=$("<ul></ul>").addClass("clear-slide-box"),
+                wrapper=$("<div></div>").addClass("list-slide-box");
+            if(this._ifVertical()){
+                container.addClass("container-slide-box-vertical");
+                arrowLeft.addClass("arrow-up");
+                arrowRight.addClass("arrow-down");
+                wrapper.css({
+                    height:options.itemHeight*options.limit,
+                    width:options.itemWidth
+                });
+            }else{
+                container.addClass("container-slide-box-horizontal");
+                arrowLeft.addClass("arrow-left");
+                arrowRight.addClass("arrow-right");
+                wrapper.css({
+                    height:options.itemHeight,
+                    width:options.limit*options.itemWidth
+                });
+            }
+            arrowLeft.addClass("active");
             this.arrowLeft=arrowLeft;
             this.arrowRight=arrowRight;
             this.list=list;
-            container.append(arrowLeft).append(arrowRight).append($("<div></div>").addClass("list-slide-box").css({
-                height:options.itemHeight,
-                width:options.limit*options.itemWidth
-            }).append(list));
+            container.append(arrowLeft).append(arrowRight).append(wrapper.append(list));
             $(this.source).append(container);
             this._load(this.currentPage,false);
             this._bindEvent();
@@ -224,9 +261,12 @@
             if(!me.canSlide)
                 return;
             me.canSlide=false;
-            me.list.animate({
+            var posCss=this._ifVertical()?{
+                top:-me.list.find("li").eq(me.currentPage*me.options.limit).position().top
+            }:{
                 left:-me.list.find("li").eq(me.currentPage*me.options.limit).position().left
-            },function(){
+            };
+            me.list.animate(posCss,function(){
                 me.canSlide=true;
             });
         },
@@ -244,6 +284,16 @@
             })
             this.arrowLeft.addClass("active");
             this.arrowRight.removeClass("active");
+        },
+        /*
+        *
+        * 是否是垂直排列
+        * @method private
+        * @author AfterWin
+        * @mail CJ_Zheng1023@hotmail.com
+        */
+        _ifVertical:function(){
+            return this.options.direction=="vertical";
         },
         /*
          *
@@ -321,32 +371,5 @@
             })
         }
     })
-
-
-
-
-
-
-
-
-
-
-    /*
-     * 扩展jquery方法
-     *
-     * @param {Object} options   配置项
-     * @return {TypeName}        传送带对象
-     * @author AfterWin
-     * @mail CJ_Zheng1023@hotmail.com
-     */
-    $.fn.slideBox=function(options){
-        var me=this;
-        var op= $.extend(true,DEFAULT_SETTING,options||DEFAULT_SETTING);
-
-        return new SlideBox(me,op);
-    }
-
-
-
 
 })(jQuery);
