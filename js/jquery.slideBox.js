@@ -16,7 +16,14 @@
  * 		v1.4.1     2016.4.28       1.设置标识位canSlide，解决点击箭头过快时报脚本错误的问题
  *
  *      v1.5.0     2016.5.5       1.增加垂直排列功能，在配置项设置direction为vertical（垂直）,默认值为horizontal（水平方向）
+ * 
+ * 	    v1.5.1     2016.5.9       1.修改数据传送方向
  *      
+ *      v1.5.2     2016.5.11       1.修改_remove方法bug
+ *      
+ *      v1.6.0     2016.5.19        1.新增API:setParams    用于动态设置传送带对象参数
+
+ *      v1.7.0     2016.5.26        1.修改点击左右箭头逻辑，当滑动过程中箭头置灰，滑动结束箭头恢复
  */
 
 
@@ -57,7 +64,7 @@
                 click:function(){},       //click回调函数
                 mouseover:function(){}    //mouseover回调函数
             },
-            version:"v1.5.0"
+            version:"v1.5.2"
         }
         var me=this;
         var op= $.extend(true,DEFAULT_SETTING,options||DEFAULT_SETTING);
@@ -121,7 +128,8 @@
                     width:options.limit*options.itemWidth
                 });
             }
-            arrowLeft.addClass("active");
+            //arrowLeft.addClass("active");
+            arrowRight.addClass("active");
             this.arrowLeft=arrowLeft;
             this.arrowRight=arrowRight;
             this.list=list;
@@ -157,11 +165,12 @@
          * 通过ajax请求加载数据
          *
          * @param {Object} options   页码
-         * @param {Object} ifReload  是否重新加载
+         * @param {Boolean} ifReload  是否重新加载
+         * @param {Function} callback  回调函数，用于点击箭头置灰后的恢复
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
          */
-        _load:function(page,ifReload){
+        _load:function(page,ifReload,callback){
             var me=this;
             var options=me.options;
             me._setStart(page);
@@ -180,7 +189,8 @@
                     var itemList=data[options.ajax.dataKey];
 
                     if(!itemList||!itemList.length||itemList.length==0){//当没有记录时
-                        me.arrowLeft.removeClass("active");
+                        //me.arrowLeft.removeClass("active");
+                        me.arrowRight.removeClass("active");
                         if(me.options.ifWantDefaultItem){
                             for(var j=0,len=me.options.limit;j<len;j++){
                                 var item=new Item("default",options);
@@ -201,10 +211,11 @@
                     }
                     me.list.width(options.itemWidth*me.list.find("li").length);
                     if(me.totalPage==1){
-                        me.arrowLeft.removeClass("active");
+                        //me.arrowLeft.removeClass("active");
+                        me.arrowRight.removeClass("active");
                     }
                     if(page!=0){
-                        me._slide();
+                        me._slide(callback);
                     }
                 }
             })
@@ -222,31 +233,43 @@
                 if(!$(this).hasClass("active")){
                     return;
                 }
-                me.currentPage+=1;
-                if(me.currentPage==1){
+                me.arrowLeft.removeClass("active");
+                me.currentPage-=1;
+                var cb=function(){
+                    me.arrowLeft.addClass("active");
+                }
+                if(me.currentPage==me.totalPage-2){
                     me.arrowRight.addClass("active");
                 }
-                if(me.currentPage==me.totalPage-1){
+                if(me.currentPage==0){
                     me.arrowLeft.removeClass("active");
+                    cb="";
                 }
-                if(me.currentPage*me.options.limit>=me.list.find("li").length){
-                    me._load(me.currentPage,false);
-                }else{
-                    me._slide();
-                }
+                me._slide(cb);
             })
             me.arrowRight.click(function(){
                 if(!$(this).hasClass("active")){
                     return;
                 }
-                me.currentPage-=1;
-                if(me.currentPage==me.totalPage-2){
+                me.arrowRight.removeClass("active");
+                me.currentPage+=1;
+                var cb=function(){
+                    me.arrowRight.addClass("active");
+                }
+                if(me.currentPage==1){
                     me.arrowLeft.addClass("active");
                 }
-                if(me.currentPage==0){
+                if(me.currentPage==me.totalPage-1){
                     me.arrowRight.removeClass("active");
+                    cb="";
                 }
-                me._slide();
+                if(me.currentPage*me.options.limit>=me.list.find("li").length){
+                    me._load(me.currentPage,false,cb);
+                }else{
+                    me._slide(cb);
+                }
+
+
             })
         },
         /*
@@ -255,8 +278,9 @@
          *
          * @author AfterWin
          * @mail CJ_Zheng1023@hotmail.com
+         * @param {Function} callback  回调函数，用于点击箭头置灰后的恢复
          */
-        _slide:function(){
+        _slide:function(callback){
             var me=this;
             if(!me.canSlide)
                 return;
@@ -268,6 +292,9 @@
             };
             me.list.animate(posCss,function(){
                 me.canSlide=true;
+                if(typeof callback=="function"){
+                    callback();
+                }
             });
         },
         /*
@@ -282,16 +309,18 @@
             this.list.css({
                 left:0
             })
-            this.arrowLeft.addClass("active");
-            this.arrowRight.removeClass("active");
+            //this.arrowLeft.addClass("active");
+            this.arrowRight.addClass("active");
+            //this.arrowRight.removeClass("active");
+            this.arrowLeft.removeClass("active");
         },
         /*
-        *
-        * 是否是垂直排列
-        * @method private
-        * @author AfterWin
-        * @mail CJ_Zheng1023@hotmail.com
-        */
+         *
+         * 是否是垂直排列
+         * @method private
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
+         */
         _ifVertical:function(){
             return this.options.direction=="vertical";
         },
@@ -316,6 +345,19 @@
          */
         reload:function(){
             this._load(0,true);
+        },
+        /*
+         *
+         * 对外暴露接口，重新设置参数       by     v1.6.0
+         *
+         * @method public
+         * @author AfterWin
+         * @mail CJ_Zheng1023@hotmail.com
+         */
+        setParams:function(params){
+            var oldOptions=this.options;
+            this.options=$.extend(true,oldOptions,params||oldOptions);
+            return this;
         }
     })
 
